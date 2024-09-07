@@ -278,8 +278,6 @@ class Draft(object):
         Return an iterator over every float, yielding a tuple for each one::
 
             (start, end, visible, length, thread)
-
-        FIXME: This ignores the back side of the fabric. Should it?
         """
         num_warp_threads = len(self.warp)
         num_weft_threads = len(self.weft)
@@ -294,12 +292,12 @@ class Draft(object):
             for y in range(1, num_weft_threads):
                 check_vis_state = (thread == drawdown[x][y])
                 if check_vis_state != this_vis_state:
-                    length = last[1] - this_start[1]
+                    length = last[1] - this_start[1] + 1
                     yield this_start, last, this_vis_state, length, thread
                     this_vis_state = check_vis_state
                     this_start = x, y
                 last = x, y
-            length = last[1] - this_start[1]
+            length = last[1] - this_start[1] + 1
             yield this_start, last, this_vis_state, length, thread
 
         for y, thread in enumerate(self.weft):
@@ -308,19 +306,17 @@ class Draft(object):
             for x in range(1, num_warp_threads):
                 check_vis_state = (thread == drawdown[x][y])
                 if check_vis_state != this_vis_state:
-                    length = last[0] - this_start[0]
+                    length = last[0] - this_start[0] + 1
                     yield this_start, last, this_vis_state, length, thread
                     this_vis_state = check_vis_state
                     this_start = x, y
                 last = x, y
-            length = last[0] - this_start[0]
+            length = last[0] - this_start[0] + 1
             yield this_start, last, this_vis_state, length, thread
 
     def compute_longest_floats(self):
         """
         Return a tuple indicating the longest floats for warp, weft.
-
-        FIXME This might be producing incorrect results.
         """
         floats = list(self.compute_floats())
         return (
