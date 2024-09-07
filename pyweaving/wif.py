@@ -4,7 +4,7 @@ from __future__ import (absolute_import, division, print_function,
 from six.moves.configparser import RawConfigParser
 
 from . import Draft, __version__
-
+from configparser import NoOptionError
 
 class WIFReader(object):
     """
@@ -29,7 +29,10 @@ class WIFReader(object):
             return False
 
     def put_metadata(self, draft):
-        draft.date = self.config.get('WIF', 'Date')
+        try:
+            draft.date = self.config.get('WIF', 'Date')
+        except NoOptionError:
+            draft.date = "No Date"
         # XXX Name, author, notes, etc.
 
     def put_warp(self, draft, wif_palette):
@@ -154,8 +157,10 @@ class WIFReader(object):
 
     def put_tieup(self, draft):
         for treadle_no, value in self.config.items('TIEUP'):
-            treadle = draft.treadles[int(treadle_no) - 1]
+            if not value: #No tieup for treadle
+                continue
             shaft_nos = [int(sn) for sn in value.split(',')]
+            treadle = draft.treadles[int(treadle_no) - 1]
             for shaft_no in shaft_nos:
                 shaft = draft.shafts[shaft_no - 1]
                 treadle.shafts.add(shaft)
