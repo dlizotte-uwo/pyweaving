@@ -81,6 +81,14 @@ def stats(opts):
     print("Treadles:", len(draft.treadles))
     print("Longest Float (Warp):", warp_longest)
     print("Longest Float (Weft):", weft_longest)
+    heddles = [0]*len(draft.shafts)
+    warp_colors = {}
+    for w in draft.warp:
+        heddles[draft.shafts.index(w.shaft)] = heddles[draft.shafts.index(w.shaft)] + 1
+        warp_colors[w.color.rgb] = warp_colors.get(w.color.rgb,0) + 1
+    print("Heddles used:", heddles)
+    print("Warp colors used:")
+    print(warp_colors)
 
 
 def main(argv=sys.argv):
