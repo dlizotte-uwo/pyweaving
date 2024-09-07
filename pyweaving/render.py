@@ -118,10 +118,11 @@ class ImageRenderer(object):
     def paint_warp(self, draw):
         starty = 0
         endy = self.pixels_per_square
+        num_threads = len(self.draft.warp)
         for ii, thread in enumerate(self.draft.warp):
             # paint box, outlined with foreground color, filled with thread
             # color
-            startx = self.pixels_per_square * ii
+            startx = self.pixels_per_square * (num_threads - ii - 1)
             endx = startx + self.pixels_per_square
             draw.rectangle((startx, starty, endx, endy),
                            outline=self.foreground,
@@ -272,7 +273,7 @@ class ImageRenderer(object):
                 draw.line((startx, starty, endx, endy),
                           fill=self.numbering)
                 # draw text on left side, right justified
-                textw, texth = draw.textsize(str(treadle_no), font=self.font)
+                textw = draw.textlength(str(treadle_no), font=self.font)
                 draw.text((startx - textw - 2, starty + 2),
                           str(treadle_no),
                           font=self.font,
@@ -318,12 +319,13 @@ class ImageRenderer(object):
     def paint_drawdown(self, draw):
         offsety = (6 + len(self.draft.shafts)) * self.pixels_per_square
         floats = self.draft.compute_floats()
-
+        num_threads = len(self.draft.warp)
         for start, end, visible, length, thread in floats:
             if visible:
-                startx = start[0] * self.pixels_per_square
+                #Must reverse while painting
+                endx = (num_threads - start[0]) * self.pixels_per_square
                 starty = (start[1] * self.pixels_per_square) + offsety
-                endx = (end[0] + 1) * self.pixels_per_square
+                startx = (num_threads - (end[0] + 1)) * self.pixels_per_square
                 endy = ((end[1] + 1) * self.pixels_per_square) + offsety
                 draw.rectangle((startx, starty, endx, endy),
                                outline=self.foreground,
@@ -418,10 +420,11 @@ class SVGRenderer(object):
     def paint_warp(self, doc):
         starty = 0
         grp = []
+        num_threads = len(self.draft.warp)
         for ii, thread in enumerate(self.draft.warp):
             # paint box, outlined with foreground color, filled with thread
             # color
-            startx = self.scale * ii
+            startx = self.scale * (num_threads - ii - 1)
             grp.append(SVG.rect(
                 x=startx, y=starty,
                 width=self.scale, height=self.scale,
@@ -695,13 +698,13 @@ class SVGRenderer(object):
     def paint_drawdown(self, doc):
         offsety = (6 + len(self.draft.shafts)) * self.scale
         floats = self.draft.compute_floats()
-
+        num_threads = len(self.draft.warp)
         grp = []
         for start, end, visible, length, thread in floats:
             if visible:
-                startx = start[0] * self.scale
+                endx = (num_threads - start[0]) * self.scale
                 starty = (start[1] * self.scale) + offsety
-                endx = (end[0] + 1) * self.scale
+                startx = (num_threads - (end[0] + 1)) * self.scale
                 endy = ((end[1] + 1) * self.scale) + offsety
                 width = endx - startx
                 height = endy - starty
