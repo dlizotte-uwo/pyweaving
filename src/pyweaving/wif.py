@@ -11,6 +11,7 @@ class WIFReader(object):
     # - add support for warp/weft spacing and thickness
     # - ensure that we're correctly handling the 'palette form' (might be only
     # RGB?)
+    """
 
     allowed_units = ('decipoints', 'inches', 'centimeters')
 

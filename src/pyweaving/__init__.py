@@ -45,7 +45,7 @@ def load_styles(filename='styles.json'):
     else:  # linux
         dir = os.path.join(os.path.expanduser('~'), '.pyweaving')
     if not os.path.exists(dir):
-        os.makedir(dir)
+        os.makedirs(dir)
         # copy styles.json master from data dir
         copy2(os.path.join(data_path, 'styles.json'), dir)
     infile = os.path.join(dir, 'styles.json')
