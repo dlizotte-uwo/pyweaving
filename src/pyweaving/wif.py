@@ -6,12 +6,15 @@ from . import Draft, __version__
 class WIFReader(object):
     """
     A reader for a specific WIF file.
+
+    Args:
+        filename (str): the wif filename
+    """
     # TODO
     # - add support for metadata: author, notes, etc.
     # - add support for warp/weft spacing and thickness
     # - ensure that we're correctly handling the 'palette form' (might be only
     # RGB?)
-    """
 
     allowed_units = ('decipoints', 'inches', 'centimeters')
 
